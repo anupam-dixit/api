@@ -9,6 +9,7 @@ const UserSchema  = new mongoose.Schema({
         type:String,
         unique:true,
         maxLength:13,
+        minLength:10,
         required:true
     },
     email: {
@@ -30,6 +31,10 @@ const UserSchema  = new mongoose.Schema({
     address : {
         type: String,
     },
+    gender:{
+        type: String,
+        enum : ['m','f']
+    },
     user_type:{
         type: String,
         default: 'u'
@@ -40,6 +45,10 @@ const UserSchema  = new mongoose.Schema({
     active :{
         type:Boolean,
         default:true,
+    },
+    created_by:{
+        type:Date,
+        default:Date.now()
     },
     created_at:{
         type:Date,

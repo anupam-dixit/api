@@ -7,6 +7,7 @@ var logger = require('morgan');
 var express = require('express');
 var cors = require('cors');
 const {db_con} = require("./db_con");
+require('dotenv').config()
 
 
 var app = module.exports = express()
@@ -36,6 +37,6 @@ app.use('/users', usersRouter);
 app.use('/files', filesRouter);
 app.use('/sms', smsRouter);
 
-app.listen(4000, () => {
-  console.log(`API listening on PORT 4000 `)
+app.listen(process.env.PORT, () => {
+  console.log(`API listening on PORT `+process.env.PORT)
 })
