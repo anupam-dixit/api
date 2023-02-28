@@ -36,8 +36,6 @@ app.use('/users', usersRouter);
 app.use('/files', filesRouter);
 app.use('/sms', smsRouter);
 
-/* istanbul ignore next */
-if (!module.parent) {
-  app.listen();
-  console.log('🔥 Express started on port 3000');
-}
+app.listen(4000, () => {
+  console.log(`API listening on PORT 4000 `)
+})
