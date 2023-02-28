@@ -38,6 +38,6 @@ app.use('/sms', smsRouter);
 
 /* istanbul ignore next */
 if (!module.parent) {
-  app.listen(3000);
+  app.listen();
   console.log('🔥 Express started on port 3000');
 }
