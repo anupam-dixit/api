@@ -1,7 +1,7 @@
 // var UserService = require('../services/user.services');
 const {User} = require("../models/user.model");
 const myLib = require("../myLib");
-const {generateToken} = require("../myLib");
+const {generateToken, decodeToken} = require("../myLib");
 const jwt = require("jsonwebtoken");
 const {Token} = require("../models/token.model");
 
@@ -73,5 +73,9 @@ const logout = async (req, res, next) => {
     }
     res.json(myLib.sendResponse(1))
 };
+
+const demo = async (req, res, next) => {
+    res.json(myLib.sendResponse(0, decodeToken(req.body.token)))
+}
 
 module.exports = {index, create, login, logout};
