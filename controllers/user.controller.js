@@ -78,4 +78,4 @@ const demo = async (req, res, next) => {
     res.json(myLib.sendResponse(0, decodeToken(req.body.token)))
 }
 
-module.exports = {index, create, login, logout};
+module.exports = {index, create, login, logout, demo};
