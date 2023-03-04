@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+const {Schema} = require("mongoose");
 
 const UserSchema  = new mongoose.Schema({
     name: {
@@ -47,16 +48,14 @@ const UserSchema  = new mongoose.Schema({
         default:true,
     },
     created_by:{
-        type:Date,
+        type:Schema.Types.ObjectId,
+        ref: 'User',
         default:Date.now()
     },
-    created_at:{
-        type:Date,
-        default:Date.now()
-    },
-    updated_at:{
-        type:Date,
-        default:Date.now()
+},{
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
     }
 })
 

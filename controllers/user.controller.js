@@ -9,7 +9,7 @@ const index = async (req, res, next) => {
     const data = await User.find().lean().exec(); // .exec() returns a true Promise
     res.json(myLib.sendResponse(1, data));
 };
-const create = async (req, res, next) => {
+const signup =  async (req, res, next) => {
     var data;
     data = await User.find({'phone': req.body.phone}).lean().exec();
     if (Object.keys(data).length !== 0) {
@@ -38,6 +38,30 @@ const create = async (req, res, next) => {
                 created_at:result.created_at,
             }
             await res.json(myLib.sendResponse(1, {user:userDataToSend,token:generateToken(result._id)}))
+        }
+    })
+};
+const create = async (req, res, next) => {
+
+    var verified=[]
+    if (req.body.phone!==undefined){
+        verified.push("phone")
+    }
+    if (req.body.email!==undefined){
+        verified.push("email")
+    }
+    if (verified.length>0){
+        req.body.verified=verified
+    }
+    req.body.created_by=decodeToken(req.headers.token).user_id
+    const dataToCreate = new User(req.body);
+
+    dataToCreate.save(async function (err, result) {
+        if (err) {
+            res.json(myLib.sendResponse(0, err))
+            return
+        } else {
+            await res.json(myLib.sendResponse(1, "Added successfully"))
         }
     })
 };
@@ -73,9 +97,8 @@ const logout = async (req, res, next) => {
     }
     res.json(myLib.sendResponse(1))
 };
-
 const demo = async (req, res, next) => {
     res.json(myLib.sendResponse(0, decodeToken(req.body.token)))
 }
 
-module.exports = {index, create, login, logout, demo};
+module.exports = {index, create, login, logout, demo, signup};

@@ -14,14 +14,11 @@ const FileModelSchema  = new mongoose.Schema({
     },
     additional: {
         type: String,
-    },
-    created_at:{
-        type:Date,
-        default:Date.now()
-    },
-    updated_at:{
-        type:Date,
-        default:Date.now()
+    }
+},{
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
     }
 })
 
