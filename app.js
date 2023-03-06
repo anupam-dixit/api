@@ -30,11 +30,13 @@ var indexRouter = require('./routes/index.routes');
 var usersRouter = require('./routes/user.routes');
 var filesRouter = require('./routes/file.routes');
 var smsRouter = require('./routes/sms.routes');
+var inviteRouter = require('./routes/invite.route');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/files', filesRouter);
 app.use('/sms', smsRouter);
+app.use('/invite', inviteRouter);
 
 app.listen(3000, () => {
   console.log(`API listening on PORT 3000 `)

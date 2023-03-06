@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 const {Token} = require("./models/token.model");
-const {token} = require("morgan");
-const res = require("express/lib/response");
+const {User} = require("./models/user.model");
 require('dotenv').config();
 
 function sendResponse(responseType, data=(responseType==1) ? "Action performed successfully" : "Unable to perform this action") {
@@ -30,11 +29,10 @@ function generateToken(userId) {
     return jwt_token
 }
 
-function decodeToken(tokenToBeDecrypted) {
-    return decodedToken = jwt.verify(tokenToBeDecrypted, process.env.TOKEN_ENC)
-
-    // res.status(200).json({success:true, data:{userId:decodedToken.userId,
-    //         email:decodedToken.email});
+function decodeToken(tokenToBeDecrypted,userData=false) {
+    decodedToken = jwt.verify(tokenToBeDecrypted, process.env.TOKEN_ENC)
+    decodedToken.user= User.findOne({phone:'8737025071'}).lean().exec()
+    return decodedToken
 }
 
 module.exports = {sendResponse, generateToken, decodeToken}

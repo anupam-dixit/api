@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 const {Token} = require("../models/token.model");
 
 const index = async (req, res, next) => {
-    const data = await User.find().lean().exec(); // .exec() returns a true Promise
+    var requester=await User.find({_id:decodeToken(req.headers.token).user_id}).lean().exec()
+    const data = await User.find(req.body).lean().exec()
     res.json(myLib.sendResponse(1, data));
 };
 const signup =  async (req, res, next) => {
@@ -42,7 +43,6 @@ const signup =  async (req, res, next) => {
     })
 };
 const create = async (req, res, next) => {
-
     var verified=[]
     if (req.body.phone!==undefined){
         verified.push("phone")
@@ -77,6 +77,7 @@ const login = async (req, res, next) => {
     const user = await User.findOne({phone :req.body.phone,password:req.body.password}).lean().exec(); // .exec() returns a true Promise
     if (user==null){
         res.json(myLib.sendResponse(0, "Incorrect credentials"))
+        return
     }
     res.json(myLib.sendResponse(1, {user:user,token:myLib.generateToken(user._id)}))
 };
@@ -98,7 +99,7 @@ const logout = async (req, res, next) => {
     res.json(myLib.sendResponse(1))
 };
 const demo = async (req, res, next) => {
-    res.json(myLib.sendResponse(0, decodeToken(req.body.token)))
+    res.json(myLib.sendResponse(0, decodeToken(req.body.token,true)))
 }
 
 module.exports = {index, create, login, logout, demo, signup};
