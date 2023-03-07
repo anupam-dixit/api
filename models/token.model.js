@@ -14,10 +14,10 @@ const TokenModelSchema = new mongoose.Schema({
         type:Boolean,
         default:true,
     },
-    expiry: {
+    expiry:{
         type:Date,
-        required:true
-    },
+        default: Date.now() +(86400000 * process.env.TOKEN_EXPIRY)
+    }
 },{
     timestamps: {
         createdAt: 'created_at',

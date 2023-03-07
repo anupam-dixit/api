@@ -38,6 +38,6 @@ app.use('/files', filesRouter);
 app.use('/sms', smsRouter);
 app.use('/invite', inviteRouter);
 
-app.listen(3000, () => {
-  console.log(`API listening on PORT 3000 `)
-})
+// app.listen(process.env.HOST_PORT, () => {
+//   console.log(`>>>>>> Running <<<<<<`)
+// })

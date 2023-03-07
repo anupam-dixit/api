@@ -7,5 +7,6 @@ const {validation_create_invitation} = require("../validation/invite.validation"
 
 /* GET users listing. */
 router.post('/create', [ensureLogin,ensureStaff,validation_create_invitation], InviteController.create);
+router.post('/list', [ensureLogin,ensureStaff], InviteController.list);
 
 module.exports = router;

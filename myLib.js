@@ -10,14 +10,11 @@ function sendResponse(responseType, data=(responseType==1) ? "Action performed s
 function generateToken(userId) {
     var finalRes;
     var jwt_token = jwt.sign(
-        {user_id: userId},
-        process.env.TOKEN_ENC,
-        {expiresIn: process.env.TOKEN_EXPIRY}
+        {user_id: userId}, process.env.TOKEN_ENC, {expiresIn:Date.now() +(86400000 * 7)}
     );
     var tokenEntry = new Token({
         token: jwt_token,
         user_id: userId,
-        expiry: new Date(Date.now() + parseInt(process.env.TOKEN_EXPIRY))
     })
     tokenEntry.save(async function (err, result) {
         if (err) {

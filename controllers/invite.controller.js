@@ -4,7 +4,7 @@ const myLib = require("../myLib");
 const {decodeToken} = require("../myLib");
 
 const create = async (req, res, next) => {
-    req.body.created_by=decodeToken(req.headers.token).user_id
+    req.body.created_by=req.headers.user_data._id
     const dataToCreate = new Invite(req.body);
     dataToCreate.save(async function (err, result) {
         if (err) {
@@ -15,5 +15,14 @@ const create = async (req, res, next) => {
         }
     })
 };
+const list = async (req, res, next) => {
+    var data;
+    if (req.headers.user_data.user_type==="sa"){
+        data = await Invite.find()
+    } else {
+        data = await Invite.find({created_by:req.headers.user_data._id})
+    }
+    res.json(myLib.sendResponse(1, data))
+};
 
-module.exports = {create};
+module.exports = {create,list};

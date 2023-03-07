@@ -1,0 +1,73 @@
+[{
+  "_id": {
+    "$oid": "63efaae6e8910d2eae0583b4"
+  },
+  "is_local": true,
+  "path": "assets/images/carousel/gnc_offers.avif",
+  "reference": "carousel_1",
+  "created_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "updated_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63efaafbe8910d2eae0583b6"
+  },
+  "is_local": true,
+  "path": "assets/images/carousel/gofigure_deals.avif",
+  "reference": "carousel_1",
+  "created_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "updated_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63efab0ce8910d2eae0583b8"
+  },
+  "is_local": true,
+  "path": "assets/images/carousel/apollo_brands_festival_offers.avif",
+  "reference": "carousel_1",
+  "created_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "updated_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63efab16e8910d2eae0583ba"
+  },
+  "is_local": true,
+  "path": "assets/images/carousel/muscletech_offers.avif",
+  "reference": "carousel_1",
+  "created_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "updated_at": {
+    "$date": {
+      "$numberLong": "1676651230964"
+    }
+  },
+  "__v": 0
+}]
