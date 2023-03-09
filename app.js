@@ -7,6 +7,8 @@ var logger = require('morgan');
 var express = require('express');
 var cors = require('cors');
 const {db_con} = require("./db_con");
+require('dotenv').config();
+
 
 var app = module.exports = express()
 app.set('views', path.join(__dirname, 'views'));
@@ -39,6 +41,6 @@ app.use('/sms', smsRouter);
 app.use('/invite', inviteRouter);
 app.use('/domain', domainRouter);
 
-app.listen(3000, () => {
+app.listen(process.env.HOST_PORT, () => {
   console.log(`>>>>>> Running <<<<<<`)
 })
