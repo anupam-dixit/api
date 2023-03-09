@@ -75,8 +75,12 @@ const login = async (req, res, next) => {
         return
     }
     const user = await User.findOne({phone :req.body.phone,password:req.body.password}).lean().exec(); // .exec() returns a true Promise
-    if (user==null){
+    if (!user){
         res.json(myLib.sendResponse(0, "Incorrect credentials"))
+        return
+    }
+    if (user.active===false){
+        res.json(myLib.sendResponse(0, "Your account is under review please try again after some time"))
         return
     }
     res.json(myLib.sendResponse(1, {user:user,token:myLib.generateToken(user._id)}))

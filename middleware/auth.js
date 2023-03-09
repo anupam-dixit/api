@@ -6,7 +6,7 @@ const moment = require("moment");
 const {now} = require("moment");
 const ensureLogin = async (req, res, next) => {
     if (req.headers.token===undefined||req.headers.token===''){
-        res.json(myLib.sendResponse(0, "Unauthorized"),401)
+        res.status(401).json(myLib.sendResponse(0, "Unauthorized"))
         return
     }
     const token_in_db = await Token.findOne({token: req.headers.token}).lean().exec();

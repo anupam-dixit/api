@@ -43,6 +43,10 @@ const UserSchema  = new mongoose.Schema({
     verified:{
         type:Array,
     },
+    discount_range:[{
+        percent:Array,
+        flat:Array
+    }],
     active :{
         type:Boolean,
         default:true,

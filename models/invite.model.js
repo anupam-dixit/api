@@ -25,6 +25,10 @@ const InviteShopSchema  = new mongoose.Schema({
         type:Schema.Types.ObjectId,
         ref: 'User',
     },
+    accepted_by:{
+        type:Schema.Types.ObjectId,
+        ref: 'User',
+    },
 },{
     timestamps: {
         createdAt: 'created_at',

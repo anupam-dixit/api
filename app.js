@@ -32,13 +32,15 @@ var usersRouter = require('./routes/user.routes');
 var filesRouter = require('./routes/file.routes');
 var smsRouter = require('./routes/sms.routes');
 var inviteRouter = require('./routes/invite.route');
+var domainRouter = require('./routes/domain.route');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/files', filesRouter);
 app.use('/sms', smsRouter);
 app.use('/invite', inviteRouter);
+app.use('/domain', domainRouter);
 
-// app.listen(process.env.HOST_PORT, () => {
-//   console.log(`>>>>>> Running <<<<<<`)
-// })
+app.listen(process.env.HOST_PORT, () => {
+  console.log(`>>>>>> Running <<<<<<`)
+})
