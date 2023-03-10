@@ -41,6 +41,6 @@ app.use('/sms', smsRouter);
 app.use('/invite', inviteRouter);
 app.use('/domain', domainRouter);
 
-// app.listen(process.env.HOST_PORT||3000, () => {
-//   console.log(`>>>>>> Running <<<<<<`)
-// })
+app.listen(process.env.HOST_PORT||3000, () => {
+  console.log(`>>>>>> Running <<<<<<`)
+})
