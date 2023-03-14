@@ -1,0 +1,8 @@
+"start": "pm2 start app.js",
+"stop": "pm2 stop",
+"restart": "pm2 restart",
+"delete": "pm2 delete",
+"list" : "pm2 list",
+"monit" : "pm2 monit"
+},
+above shown pm2 for production
