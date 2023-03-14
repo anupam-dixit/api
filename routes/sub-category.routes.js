@@ -9,6 +9,6 @@ const {validation_create_sub_category, validation_update_sub_category, validatio
 router.get('/list', [], SubCategoryController.list);
 router.post('/create', [ensureLogin,ensureAdmin,validation_create_sub_category,ensureAdmin], SubCategoryController.create);
 router.post('/update', [ensureLogin,ensureAdmin,validation_update_sub_category,ensureAdmin], SubCategoryController.update);
-router.delete('/delete/:_id', [ensureLogin,ensureAdmin,validation_delete_sub_category(),ensureAdmin], SubCategoryController.remove);
+// router.delete('/delete/:_id', [ensureLogin,ensureAdmin,validation_delete_sub_category(),ensureAdmin], SubCategoryController.remove);
 
 module.exports = router;

@@ -71,19 +71,19 @@ const list = async (req, res, next) => {
     // res.json(myLib.sendResponse(1, data))
 };
 const remove = async (req, res, next) => {
-    SubCategory.deleteOne({_id: req.params._id}, function (err, doc) {
-        if (err) {
-            res.json(myLib.sendResponse(0))
-            return
-        }
-    });
-    Files.deleteOne({additional: req.params._id}, function (err, doc) {
-        if (err) {
-            res.json(myLib.sendResponse(0))
-            return
-        }
-    });
-    res.json(myLib.sendResponse(1))
+    // SubCategory.deleteOne({_id: req.params._id}, function (err, doc) {
+    //     if (err) {
+    //         res.json(myLib.sendResponse(0))
+    //         return
+    //     }
+    // });
+    // Files.deleteOne({additional: req.params._id}, function (err, doc) {
+    //     if (err) {
+    //         res.json(myLib.sendResponse(0))
+    //         return
+    //     }
+    // });
+    // res.json(myLib.sendResponse(1))
 };
 
 module.exports = {create,list,update,remove};
