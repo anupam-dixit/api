@@ -6,9 +6,20 @@ const SubCategorySchema  = new mongoose.Schema({
         type:String,
         required: true
     },
-    category_id:{
+    categories:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
+    }],
+    description: {
+        type:String,
+    },
+    active: {
+        type:Boolean,
+        default:true
+    },
+    created_by: {
         type:Schema.Types.ObjectId,
-        ref: 'Category',
+        ref: 'User',
     }
 },{
     timestamps: {
@@ -17,6 +28,6 @@ const SubCategorySchema  = new mongoose.Schema({
     }
 })
 
-const SubCategory = mongoose.model('Sub_category', SubCategorySchema)
+const SubCategory = mongoose.model('SubCategory', SubCategorySchema)
 
 module.exports = {SubCategory};

@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "pm2 start app.js",
+    "stop": "pm2 stop",
+    "restart": "pm2 restart",
+    "delete": "pm2 delete",
+    "list" : "pm2 list",
+    "monit" : "pm2 monit"
   },
   "dependencies": {
     "body-parser": "^1.20.1",
@@ -19,6 +24,7 @@
     "mongoose": "^6.9.0",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1",
+    "pm2": "^5.2.2",
     "pug": "^2.0.4"
   }
 }

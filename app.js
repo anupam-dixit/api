@@ -34,6 +34,7 @@ var smsRouter = require('./routes/sms.routes');
 var inviteRouter = require('./routes/invite.route');
 var domainRouter = require('./routes/domain.route');
 var categoryRouter = require('./routes/category.route');
+var subCategoryRouter = require('./routes/sub-category.routes');
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -42,6 +43,7 @@ app.use('/sms', smsRouter);
 app.use('/invite', inviteRouter);
 app.use('/domain', domainRouter);
 app.use('/category', categoryRouter);
+app.use('/sub-category', subCategoryRouter);
 
 app.listen(process.env.HOST_PORT||3000, () => {
   console.log(`>>>>>> Running <<<<<<`)
