@@ -3,16 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "stop": "pm2 stop",
+    "restart": "pm2 restart",
+    "delete": "pm2 delete",
+    "list": "pm2 list",
+    "monit": "pm2 monit"
   },
   "dependencies": {
     "body-parser": "^1.20.1",
+    "cloudinary": "^1.35.0",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "express-busboy": "^9.0.0",
-    "helmet": "^6.0.1",
+    "express-validator": "^6.15.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",

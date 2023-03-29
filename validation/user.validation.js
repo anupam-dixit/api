@@ -1,6 +1,7 @@
 
 const myLib = require("../myLib");
 const {User} = require("../models/user.model");
+const mongoose = require("mongoose");
 const validation_create_user = async (req, res, next) => {
     if (req.body.name===undefined||req.body.name.length<3){
         res.json(myLib.sendResponse(0, "Name too short"))
@@ -32,4 +33,16 @@ const validation_create_user = async (req, res, next) => {
     }
     next()
 };
-module.exports = {validation_create_user}
+const validation_update_user = async (req,res,next) =>{
+    if (!mongoose.Types.ObjectId.isValid(req.body._id)){
+        res.json(myLib.sendResponse(0, "Invalid ID"))
+        return
+    }
+    var user = await User.findById(req.body._id).lean().exec()
+    if (!user){
+        res.json(myLib.sendResponse(0, "User not found"))
+        return
+    }
+    next()
+};
+module.exports = {validation_create_user,validation_update_user}

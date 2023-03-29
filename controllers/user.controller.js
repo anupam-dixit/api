@@ -4,10 +4,14 @@ const myLib = require("../myLib");
 const {generateToken, decodeToken} = require("../myLib");
 const jwt = require("jsonwebtoken");
 const {Token} = require("../models/token.model");
+const mongoose = require("mongoose");
 
 const index = async (req, res, next) => {
-    var requester=await User.find({_id:decodeToken(req.headers.token).user_id}).lean().exec()
-    const data = await User.find(req.body).lean().exec()
+    if (req.body._id!==undefined&&!mongoose.Types.ObjectId.isValid(req.body._id)){
+        res.json(myLib.sendResponse(0, "Invalid ID Provided"))
+        return
+    }
+    const data = await User.find(req.body).populate('permits.domains').lean().exec()
     res.json(myLib.sendResponse(1, data));
 };
 const signup =  async (req, res, next) => {
@@ -65,6 +69,13 @@ const create = async (req, res, next) => {
         }
     })
 };
+const update = async (req, res, next) => {
+    const stts=await User.updateOne({_id:req.body._id}, req.body).then((doc)=>{
+        res.json(myLib.sendResponse(1))
+    }).catch((err)=>{
+        res.json(myLib.sendResponse(0))
+    })
+};
 const login = async (req, res, next) => {
     if (req.body.phone.length!=10){
         res.json(myLib.sendResponse(0, "Provide 10 digit phone number"))
@@ -106,4 +117,4 @@ const demo = async (req, res, next) => {
     res.json(myLib.sendResponse(0, decodeToken(req.body.token,true)))
 }
 
-module.exports = {index, create, login, logout, demo, signup};
+module.exports = {index, create, update, login, logout, demo, signup};

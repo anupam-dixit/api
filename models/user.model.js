@@ -44,10 +44,16 @@ const UserSchema  = new mongoose.Schema({
     verified:{
         type:Array,
     },
-    discount_range:[{
-        percent:Array,
-        flat:Array
-    }],
+    permits:{
+        discount_range:{
+            percent:[{type: Number}],
+            flat:[{type:Number}]
+        },
+        domains:[{
+            type: Schema.Types.ObjectId,
+            ref: 'Domain'
+        }],
+    },
     active :{
         type:Boolean,
         default:true,

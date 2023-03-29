@@ -24,6 +24,11 @@ const list = async (req, res, next) => {
     var data=await Domain.find(req.body).lean().exec()
     res.json(myLib.sendResponse(1, data))
 };
+const permittedDomains = async (req, res, next) => {
+    req.body._id=req.headers.user_data.permits.domains
+    var data=await Domain.find(req.body).lean().exec()
+    res.json(myLib.sendResponse(1, data))
+};
 const remove = async (req, res, next) => {
     Domain.findByIdAndDelete(req.body._id, function (err, doc) {
         if (err) res.json(myLib.sendResponse(0))
@@ -31,4 +36,4 @@ const remove = async (req, res, next) => {
     });
 };
 
-module.exports = {create,list,update,remove};
+module.exports = {create,list,permittedDomains,update,remove};

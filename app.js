@@ -9,16 +9,13 @@ var cors = require('cors');
 const {db_con} = require("./db_con");
 require('dotenv').config();
 
-
 var app = module.exports = express()
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(logger('dev'));
-app.use(cors());
-
-app.use(bodyParser.json());
-app.use(multer().array());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }))
+app.use(cors())
 /*
 database
  */
@@ -35,15 +32,17 @@ var inviteRouter = require('./routes/invite.route');
 var domainRouter = require('./routes/domain.route');
 var categoryRouter = require('./routes/category.route');
 var subCategoryRouter = require('./routes/sub-category.routes');
+var productRouter = require('./routes/product.route');
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users',[multer().none()], usersRouter);
 app.use('/files', filesRouter);
-app.use('/sms', smsRouter);
-app.use('/invite', inviteRouter);
-app.use('/domain', domainRouter);
-app.use('/category', categoryRouter);
-app.use('/sub-category', subCategoryRouter);
+app.use('/sms',[multer().none()], smsRouter);
+app.use('/invite',[multer().none()], inviteRouter);
+app.use('/domain',[multer().none()], domainRouter);
+app.use('/category',[multer().none()], categoryRouter);
+app.use('/sub-category',[multer().none()], subCategoryRouter);
+app.use('/product',[multer().none()], productRouter);
 
 app.listen(process.env.HOST_PORT||3000, () => {
   console.log(`>>>>>> Running <<<<<<`)

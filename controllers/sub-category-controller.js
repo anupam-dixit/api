@@ -3,6 +3,7 @@ const myLib = require("../myLib");
 const {Files} = require("../models/file.model");
 const {Schema} = require("mongoose");
 const mongoose = require("mongoose");
+const {body} = require("express-validator");
 const create = async (req, res, next) => {
     const dataToCreate = new SubCategory(req.body);
     dataToCreate.save(async function (err, result) {
@@ -37,53 +38,97 @@ const update = async (req, res, next) => {
     res.json(myLib.sendResponse((categoryUpd&&iconUpd)?1:0))
 };
 const list = async (req, res, next) => {
-    // var matchFilter={};
-    // if (req.body._id!==undefined&&!mongoose.Types.ObjectId.isValid(req.body._id)){
-    //     res.json(myLib.sendResponse(1, "Invalid ID provided"))
-    // }
-    // if (req.body._id!==undefined&&mongoose.Types.ObjectId.isValid(req.body._id)){
-    //     data=await Category.aggregate([
-    //         {$match:{_id:mongoose.Types.ObjectId(req.body._id)}},
-    //         { "$addFields": { "converted_id": { "$toString": "$_id" }}},
-    //         { $lookup:
-    //                 {
-    //                     from: 'files',
-    //                     localField: 'converted_id',
-    //                     foreignField: 'additional',
-    //                     as: 'icon'
-    //                 },
-    //         }
-    //     ]).exec()
-    // }
-    // else {
-    //     data=await Category.aggregate([
-    //         { "$addFields": { "converted_id": { "$toString": "$_id" }}},
-    //         { $lookup:
-    //                 {
-    //                     from: 'files',
-    //                     localField: 'converted_id',
-    //                     foreignField: 'additional',
-    //                     as: 'icon'
-    //                 },
-    //         }
-    //     ]).exec()
-    // }
-    // res.json(myLib.sendResponse(1, data))
+    if (req.body.categories!==undefined){
+        categs=req.body.categories
+        const objectIdArray = categs.map((id) => {
+            return mongoose.Types.ObjectId(id);
+        });
+        data=await SubCategory.aggregate([
+            {$match:{categories:{$in:objectIdArray}}},
+            { "$addFields": { "converted_id": { "$toString": "$_id" }}},
+            { $lookup:
+                    {
+                        from: 'files',
+                        localField: 'converted_id',
+                        foreignField: 'additional',
+                        as: 'icon'
+                    },
+            },{
+                $lookup:
+                    {
+                        from: 'categories',
+                        localField: 'categories',
+                        foreignField: '_id',
+                        as: 'categories'
+                    },
+            }
+        ]).exec()
+        res.json(myLib.sendResponse(1, data))
+        return
+    }
+    if (req.body._id!==undefined&&!mongoose.Types.ObjectId.isValid(req.body._id)){
+        res.json(myLib.sendResponse(0, "Invalid ID provided"))
+        return
+    }
+    if (req.body._id!==undefined&&mongoose.Types.ObjectId.isValid(req.body._id)){
+        data=await SubCategory.aggregate([
+            {$match:{_id:mongoose.Types.ObjectId(req.body._id)}},
+            { "$addFields": { "converted_id": { "$toString": "$_id" }}},
+            { $lookup:
+                    {
+                        from: 'files',
+                        localField: 'converted_id',
+                        foreignField: 'additional',
+                        as: 'icon'
+                    },
+            },{
+                $lookup:
+                    {
+                        from: 'categories',
+                        localField: 'categories',
+                        foreignField: '_id',
+                        as: 'categories'
+                    },
+            }
+        ]).exec()
+    }
+    else {
+        data=await SubCategory.aggregate([
+            { "$addFields": { "converted_id": { "$toString": "$_id" }}},
+            { $lookup:
+                    {
+                        from: 'files',
+                        localField: 'converted_id',
+                        foreignField: 'additional',
+                        as: 'icon'
+                    },
+            },{
+                $lookup:
+                    {
+                        from: 'categories',
+                        localField: 'categories',
+                        foreignField: '_id',
+                        as: 'categories'
+                    },
+            }
+        ]).exec()
+    }
+    res.json(myLib.sendResponse(1, data))
 };
 const remove = async (req, res, next) => {
-    // SubCategory.deleteOne({_id: req.params._id}, function (err, doc) {
-    //     if (err) {
-    //         res.json(myLib.sendResponse(0))
-    //         return
-    //     }
-    // });
-    // Files.deleteOne({additional: req.params._id}, function (err, doc) {
-    //     if (err) {
-    //         res.json(myLib.sendResponse(0))
-    //         return
-    //     }
-    // });
-    // res.json(myLib.sendResponse(1))
+    SubCategory.deleteOne({_id: req.params._id}, function (err, doc) {
+        if (err) {
+            res.json(myLib.sendResponse(0))
+            return
+        }
+    });
+    Files.deleteOne({additional: req.params._id}, function (err, doc) {
+        if (err) {
+            res.json(myLib.sendResponse(0))
+            return
+        }
+    });
+    res.json(myLib.sendResponse(1))
 };
 
 module.exports = {create,list,update,remove};
