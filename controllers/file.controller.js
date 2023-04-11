@@ -4,16 +4,17 @@ const myLib = require("../myLib");
 const path = require("path");
 const {body} = require("express-validator");
 const fs = require("fs");
+const e = require("express");
 const cloudinary = require('cloudinary').v2;
 // Configuration
 cloudinary.config({
-    cloud_name: "deoy7jghp",
+    cloud_name: "sidhaulionline",
     api_key: "177664842278386",
     api_secret: "ZdF2sut0XaAVOjLCQgRQwHBpA_s"
 });
 const index = async (req, res, next) => {
     const data = await Files.find(req.body) // .exec() returns a true Promise
-    res.json({data});
+    res.json(myLib.sendResponse(1,data));
 };
 
 const create = (req, res, next) => {
@@ -35,7 +36,7 @@ const upload = (req, res, next) => {
     if (req.params.additional === undefined) {
         res.json(myLib.sendResponse(0, "Additional field is required"))
         res.req.files.forEach((obj) => {
-            myLib.delFile("E:\\pitesh\\Angular\\api\\public\\images\\" + obj.filename)
+            myLib.delFile("public/images/" + obj.filename)
         });
         return
     }
@@ -57,4 +58,13 @@ const upload = (req, res, next) => {
     });
 };
 
-module.exports = {index, create, upload};
+const remove = async (req, res, next) => {
+    await Files.findByIdAndDelete(req.params._id).then((doc)=>{
+        myLib.delFile(doc.path)
+        res.json(myLib.sendResponse(1))
+    }).catch((e)=>{
+        res.json(myLib.sendResponse(0))
+    })
+};
+
+module.exports = {index, create, upload, remove};

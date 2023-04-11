@@ -4,13 +4,14 @@ const {User} = require("./models/user.model");
 const fs = require("fs");
 require('dotenv').config();
 
-function sendResponse(responseType, data=(responseType==1) ? "Action performed successfully" : "Unable to perform this action") {
+function sendResponse(responseType, data = (responseType == 1) ? "Action performed successfully" : "Unable to perform this action") {
     return {status: (responseType === 1), response: data}
 }
+
 function generateToken(userId) {
     var finalRes;
     var jwt_token = jwt.sign(
-        {user_id: userId}, process.env.TOKEN_ENC, {expiresIn:Date.now() +(86400000 * 7)}
+        {user_id: userId}, process.env.TOKEN_ENC, {expiresIn: Date.now() + (86400000 * 7)}
     );
     var tokenEntry = new Token({
         token: jwt_token,
@@ -20,20 +21,29 @@ function generateToken(userId) {
         if (err) {
             finalRes = 'false'
         } else {
-            finalRes=result
+            finalRes = result
         }
     })
     return jwt_token
 }
-function decodeToken(tokenToBeDecrypted,userData=false) {
+
+function decodeToken(tokenToBeDecrypted, userData = false) {
     decodedToken = jwt.verify(tokenToBeDecrypted, process.env.TOKEN_ENC)
-    decodedToken.user= User.findOne({phone:'8737025071'}).lean().exec()
+    decodedToken.user = User.findOne({phone: '8737025071'}).lean().exec()
     return decodedToken
 }
+
 function delFile(path) {
-    fs.unlink(path,function(err){
+    fs.unlink(path, function (err) {
         return !err;
     });
 }
 
-module.exports = {sendResponse, generateToken, decodeToken,delFile}
+function randomString(length) {
+    chars="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
+}
+
+module.exports = {sendResponse, generateToken, decodeToken, delFile, randomString}

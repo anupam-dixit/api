@@ -2,6 +2,13 @@
 const myLib = require("../myLib");
 const {User} = require("../models/user.model");
 const mongoose = require("mongoose");
+const validation_list_user = async (req, res, next) => {
+    if (req.headers.user_data.user_type!=='sa'){
+        // If not super admin then show self data
+        req.body._id=req.headers.user_data._id
+    }
+    next()
+};
 const validation_create_user = async (req, res, next) => {
     if (req.body.name===undefined||req.body.name.length<3){
         res.json(myLib.sendResponse(0, "Name too short"))
@@ -17,7 +24,7 @@ const validation_create_user = async (req, res, next) => {
         return
     }
     if (req.body.password===undefined||req.body.password.length<3){
-        res.json(myLib.sendResponse(0, "Password is can not be too short"))
+        res.json(myLib.sendResponse(0, "Password can not be too short"))
         return
     }
     if (req.body.email!==undefined){
@@ -45,4 +52,4 @@ const validation_update_user = async (req,res,next) =>{
     }
     next()
 };
-module.exports = {validation_create_user,validation_update_user}
+module.exports = {validation_list_user, validation_create_user,validation_update_user}

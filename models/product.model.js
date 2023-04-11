@@ -46,8 +46,14 @@ const ProductSchema = new mongoose.Schema({
         ref: 'SubCategory',
     }],
     active: {
-        type: Boolean,
-        default: false,
+        vendor:{
+            type: Boolean,
+            default: true,
+        },
+        admin:{
+            type: Boolean,
+            default: false,
+        }
     },
     created_by: {
         type: Schema.Types.ObjectId,
@@ -57,8 +63,10 @@ const ProductSchema = new mongoose.Schema({
         type: String
     },
     images:{
-        type: Object,
-        get:imgs
+        type: String,
+        read: async (value, schemaType, document) => {
+            return 'value that your code sees'
+        },
     }
 }, {
     virtuals:true,
@@ -69,13 +77,6 @@ const ProductSchema = new mongoose.Schema({
         updatedAt: 'updated_at'
     }
 })
-
-async function imgs() {
-    ans = 'test'
-    ans = await Files.find({additional: '64149fe39c629e0c867b106f'}).lean().exec()
-    console.log(ans)
-    return ans
-}
 ProductSchema.virtual('price').get(function() {
     let result
     if (this.price_mod.vendor.mod_type==='n'){
@@ -86,11 +87,6 @@ ProductSchema.virtual('price').get(function() {
     }
     return result
 });
-// ProductSchema.virtual('images', {
-//     ref: 'File',
-//     localField: 'id',
-//     foreignField: 'additional',
-// });
 ProductSchema.index({
     'name': 'text',
     'description': 'text',

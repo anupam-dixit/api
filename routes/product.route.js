@@ -3,7 +3,7 @@ var router = express.Router();
 const ProductController=require('../controllers/product.controller');
 const {ensureLogin} = require("../middleware/auth");
 const {ensureVendor} = require("../middleware/ensureVendor");
-const {validation_create_product, validation_update_product} = require("../validation/product.validation");
+const {validation_create_product, validation_update_product, validation_delete_product} = require("../validation/product.validation");
 const path = require("path");
 const multer = require("multer");
 var storage = multer.diskStorage({
@@ -17,8 +17,9 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 /* GET users listing. */
-router.post('/list',[ensureLogin], ProductController.index);
+router.post('/list',[], ProductController.index);
 router.post('/create', [ensureLogin,ensureVendor,validation_create_product], ProductController.create);
 router.post('/update', [ensureLogin,validation_update_product], ProductController.update);
+router.delete('/delete/:_id', [ensureLogin,validation_delete_product], ProductController.remove);
 
 module.exports = router;

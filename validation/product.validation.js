@@ -23,7 +23,7 @@ const validation_create_product = async (req, res, next) => {
         res.json(myLib.sendResponse(0, "Invalid Category"))
         return
     }
-    if (req.body.sub_categ[0]!==null){
+    if (req.body.sub_categ!==undefined){
         if (!Array.isArray(req.body.sub_categ)){
             res.json(myLib.sendResponse(0, "Subcategories to be in array"))
             return
@@ -50,7 +50,7 @@ const validation_create_product = async (req, res, next) => {
         }
     }
     if (!found){
-        res.json(myLib.sendResponse(0, found))
+        res.json(myLib.sendResponse(0, "This domain is not permitted"))
         return
     }
     if (!req.body.hasOwnProperty('price_mod')){
@@ -61,6 +61,11 @@ const validation_create_product = async (req, res, next) => {
                 mod_amount: '0',
             }
         }
+    }
+    if (req.headers.user_data.user_type!=='sa'){
+        // Remove super active if not super admin
+        if (req.body.hasOwnProperty('active')&&req.body.active.hasOwnProperty('admin'))
+        req.body.active.admin=false
     }
     if (vendor.permits.hasOwnProperty('discount_range')){
         if (vendor.permits.discount_range.hasOwnProperty('flat')){
@@ -96,6 +101,7 @@ const validation_create_product = async (req, res, next) => {
             }
         }
     }
+
     next()
 };
 const validation_update_product = async (req, res, next) => {
@@ -124,7 +130,7 @@ const validation_update_product = async (req, res, next) => {
         res.json(myLib.sendResponse(0, "Invalid Category"))
         return
     }
-    if (req.body.sub_categ[0]!==null){
+    if (req.body.sub_categ!==undefined){
         if (!Array.isArray(req.body.sub_categ)){
             res.json(myLib.sendResponse(0, "Subcategories to be in array"))
             return
@@ -162,6 +168,11 @@ const validation_update_product = async (req, res, next) => {
                 mod_amount: '0',
             }
         }
+    }
+    if (req.headers.user_data.user_type!=='sa'){
+        // Not super admin
+        if (req.body.hasOwnProperty('active')&&req.body.active.hasOwnProperty('admin'))
+            req.body.active.admin=false
     }
     if (vendor.permits.hasOwnProperty('discount_range')){
         if (vendor.permits.discount_range.hasOwnProperty('flat')){
@@ -200,15 +211,15 @@ const validation_update_product = async (req, res, next) => {
     next()
 };
 const validation_delete_product = async (req, res, next) => {
-    // if (!mongoose.Types.ObjectId.isValid(req.body._id)){
-    //     res.json(myLib.sendResponse(0, "Invalid id provided"))
-    //     return
-    // }
-    // domain = await Domain.findOne({_id :req.body._id}).lean().exec()
-    // if (!domain){
-    //     res.json(myLib.sendResponse(0, "Domain Id not found"))
-    //     return
-    // }
+    if (!mongoose.Types.ObjectId.isValid(req.params._id)){
+        res.json(myLib.sendResponse(0, "Invalid id provided"))
+        return
+    }
+    product = await Product.countDocuments({_id :req.params._id}).lean().exec()
+    if (!product){
+        res.json(myLib.sendResponse(0, "Id not found"))
+        return
+    }
     next()
 };
 module.exports = {validation_create_product,validation_update_product,validation_delete_product}
