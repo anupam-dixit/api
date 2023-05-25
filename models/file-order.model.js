@@ -1,7 +1,7 @@
 var mongoose = require('mongoose')
 const {Schema} = require("mongoose");
 
-const OrderSchema  = new mongoose.Schema({
+const FileOrderSchema  = new mongoose.Schema({
     order_id: {
         type:String,
         required:true
@@ -9,24 +9,17 @@ const OrderSchema  = new mongoose.Schema({
     vendor_id: {
         type:Schema.Types.ObjectId,
         ref: 'User',
-        required:true
-    },
-    product_id: {
-        type:Schema.Types.ObjectId,
-        ref: 'Product',
-        required:true
-    },
-    unit_price: {
-        type:Number,
-        required:true
-    },
-    quantity: {
-        type:Number,
-        required:true
     },
     price: {
         type:Number,
-        required:true
+    },
+    notes: {
+        user:{
+            type:String
+        },
+        vendor:{
+            type:String
+        }
     },
     status:{
         order:{
@@ -51,6 +44,6 @@ const OrderSchema  = new mongoose.Schema({
         updatedAt: 'updated_at'
     }
 })
-const Order = mongoose.model('Order', OrderSchema)
+const FileOrder = mongoose.model('FileOrder', FileOrderSchema)
 
-module.exports = {Order};
+module.exports = {FileOrder};

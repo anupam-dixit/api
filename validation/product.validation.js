@@ -6,6 +6,17 @@ const {Category} = require("../models/category.model");
 const {SubCategory} = require("../models/sub-category.model");
 const {Mongoose} = require("mongoose");
 const { body, validationResult } = require('express-validator');
+const {ensureLogin} = require("../middleware/auth");
+const {ensureAdmin} = require("../middleware/ensureAdmin");
+const {ensureVendor} = require("../middleware/ensureVendor");
+
+const validation_list_product = async (req, res, next) => {
+    if (req.body.own==1){
+        ensureLogin(req, res, next)
+    } else {
+        next()
+    }
+};
 const validation_create_product = async (req, res, next) => {
     if (req.body.name===undefined||req.body.name.length<3){
         res.json(myLib.sendResponse(0, "Provide correct title pls"))
@@ -62,21 +73,21 @@ const validation_create_product = async (req, res, next) => {
             }
         }
     }
-    if (req.headers.user_data.user_type!=='sa'){
+    if (req.headers.user_data.role!=='SUPER_ADMIN'){
         // Remove super active if not super admin
         if (req.body.hasOwnProperty('active')&&req.body.active.hasOwnProperty('admin'))
-        req.body.active.admin=false
+            req.body.active.admin=false
     }
     if (vendor.permits.hasOwnProperty('discount_range')){
         if (vendor.permits.discount_range.hasOwnProperty('flat')){
-            if (vendor.permits.discount_range.flat[0]!==undefined&&req.body.price_mod.vendor.mod_type==='n'){
+            if (vendor.permits.discount_range.flat[0]!==undefined&&vendor.permits.discount_range.flat[0]!==null&&req.body.price_mod.vendor.mod_type==='n'){
                 // Validate minimum flat discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount<vendor.permits.discount_range.flat[0]){
                     res.json(myLib.sendResponse(0, "Flat discount can not be less than "+vendor.permits.discount_range.flat[0]))
                     return
                 }
             }
-            if (vendor.permits.discount_range.flat[1]!==undefined&&req.body.price_mod.vendor.mod_type==='n'){
+            if (vendor.permits.discount_range.flat[1]!==undefined&&vendor.permits.discount_range.flat[1]!==null&&req.body.price_mod.vendor.mod_type==='n'){
                 // Validate minimum flat discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount>vendor.permits.discount_range.flat[1]){
                     res.json(myLib.sendResponse(0, "Flat discount can not be greater than "+vendor.permits.discount_range.flat[1]))
@@ -85,14 +96,14 @@ const validation_create_product = async (req, res, next) => {
             }
         }
         if (vendor.permits.discount_range.hasOwnProperty('percent')) {
-            if (vendor.permits.discount_range.percent[0] !== undefined&&req.body.price_mod.vendor.mod_type==='%') {
+            if (vendor.permits.discount_range.percent[0] !== undefined&&vendor.permits.discount_range.percent[0] !== null&&req.body.price_mod.vendor.mod_type==='%') {
                 // Validate minimum percent discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount<vendor.permits.discount_range.percent[0]) {
                     res.json(myLib.sendResponse(0, "Minimum percent discount can not be less than " + vendor.permits.discount_range.percent[0]))
                     return
                 }
             }
-            if (vendor.permits.discount_range.percent[1] !== undefined&&req.body.price_mod.vendor.mod_type==='%') {
+            if (vendor.permits.discount_range.percent[1] !== undefined&&vendor.permits.discount_range.percent[1] !== null&&req.body.price_mod.vendor.mod_type==='%') {
                 // Validate minimum percent discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount>vendor.permits.discount_range.percent[1]) {
                     res.json(myLib.sendResponse(0, "Maximum percent discount can not be greater than " + vendor.permits.discount_range.percent[1]))
@@ -169,21 +180,21 @@ const validation_update_product = async (req, res, next) => {
             }
         }
     }
-    if (req.headers.user_data.user_type!=='sa'){
+    if (req.headers.user_data.role!=='SUPER_ADMIN'){
         // Not super admin
         if (req.body.hasOwnProperty('active')&&req.body.active.hasOwnProperty('admin'))
             req.body.active.admin=false
     }
     if (vendor.permits.hasOwnProperty('discount_range')){
         if (vendor.permits.discount_range.hasOwnProperty('flat')){
-            if (vendor.permits.discount_range.flat[0]!==undefined&&req.body.price_mod.vendor.mod_type==='n'){
+            if (vendor.permits.discount_range.flat[0]!==undefined&&vendor.permits.discount_range.flat[0]!==null&&req.body.price_mod.vendor.mod_type==='n'){
                 // Validate minimum flat discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount<vendor.permits.discount_range.flat[0]){
                     res.json(myLib.sendResponse(0, "Flat discount can not be less than "+vendor.permits.discount_range.flat[0]))
                     return
                 }
             }
-            if (vendor.permits.discount_range.flat[1]!==undefined&&req.body.price_mod.vendor.mod_type==='n'){
+            if (vendor.permits.discount_range.flat[1]!==undefined&&vendor.permits.discount_range.flat[1]!==null&&req.body.price_mod.vendor.mod_type==='n'){
                 // Validate minimum flat discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount>vendor.permits.discount_range.flat[1]){
                     res.json(myLib.sendResponse(0, "Flat discount can not be greater than "+vendor.permits.discount_range.flat[1]))
@@ -192,14 +203,14 @@ const validation_update_product = async (req, res, next) => {
             }
         }
         if (vendor.permits.discount_range.hasOwnProperty('percent')) {
-            if (vendor.permits.discount_range.percent[0] !== undefined&&req.body.price_mod.vendor.mod_type==='%') {
+            if (vendor.permits.discount_range.percent[0] !== undefined&&vendor.permits.discount_range.percent[0] !== null&&req.body.price_mod.vendor.mod_type==='%') {
                 // Validate minimum percent discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount<vendor.permits.discount_range.percent[0]) {
                     res.json(myLib.sendResponse(0, "Minimum percent discount can not be less than " + vendor.permits.discount_range.percent[0]))
                     return
                 }
             }
-            if (vendor.permits.discount_range.percent[1] !== undefined&&req.body.price_mod.vendor.mod_type==='%') {
+            if (vendor.permits.discount_range.percent[1] !== undefined&&vendor.permits.discount_range.percent[1] !== null&&req.body.price_mod.vendor.mod_type==='%') {
                 // Validate minimum percent discount if isset by admin
                 if (req.body.price_mod.vendor.mod_amount>vendor.permits.discount_range.percent[1]) {
                     res.json(myLib.sendResponse(0, "Maximum percent discount can not be greater than " + vendor.permits.discount_range.percent[1]))
@@ -222,7 +233,34 @@ const validation_delete_product = async (req, res, next) => {
     }
     next()
 };
-module.exports = {validation_create_product,validation_update_product,validation_delete_product}
+const validation_toggle_active = async (req, res, next) => {
+    if (!mongoose.Types.ObjectId.isValid(req.body._id)){
+        res.json(myLib.sendResponse(0, "Invalid id provided"))
+        return
+    }
+    req.body._id=mongoose.Types.ObjectId(req.body._id)
+
+    product = await Product.countDocuments({_id :req.body._id}).lean().exec()
+    if (!product){
+        console.log(product)
+        res.json(myLib.sendResponse(0, "Id not found"))
+        return
+    }
+    if (req.body.active.admin!==undefined){
+        if (!await myLib.hasPermission(req.headers.user_data.role, "PRODUCTS_UPDATE_ALL")){
+            res.json(myLib.sendResponse(0, "PRODUCTS_UPDATE_ALL Permission needed"))
+            return
+        }
+    }
+    if (req.body.active.vendor!==undefined){
+        if (!await myLib.hasPermission(req.headers.user_data.role, "PRODUCTS_UPDATE_SELF")){
+            res.json(myLib.sendResponse(0, "PRODUCTS_UPDATE_SELF Permission needed"))
+            return
+        }
+    }
+    next()
+};
+module.exports = {validation_list_product,validation_create_product,validation_update_product,validation_delete_product,validation_toggle_active}
 
 /** Below is the res.req.files after multer middleware in the controller function
  * [

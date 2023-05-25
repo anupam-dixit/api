@@ -36,6 +36,7 @@ var subCategoryRouter = require('./routes/sub-category.routes');
 var productRouter = require('./routes/product.route');
 var cartRouter = require('./routes/cart.route');
 var orderRouter = require('./routes/order.route');
+var accessRouter = require('./routes/access.route');
 
 app.use('/', indexRouter);
 app.use('/users',[multer().none()], usersRouter);
@@ -48,6 +49,7 @@ app.use('/sub-category',[multer().none()], subCategoryRouter);
 app.use('/product',[multer().none()], productRouter);
 app.use('/cart',[multer().none()], cartRouter);
 app.use('/order',[multer().none()], orderRouter);
+app.use('/access',[multer().none()], accessRouter);
 
 app.listen(process.env.HOST_PORT||3000, () => {
   console.log(`>>>>>> Running <<<<<<`)

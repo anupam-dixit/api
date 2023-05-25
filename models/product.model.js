@@ -49,8 +49,10 @@ const ProductSchema = new mongoose.Schema({
         vendor:{
             type: Boolean,
             default: true,
+            required:true,
         },
         admin:{
+            required:true,
             type: Boolean,
             default: false,
         }
@@ -62,12 +64,6 @@ const ProductSchema = new mongoose.Schema({
     searh_keywords: {
         type: String
     },
-    images:{
-        type: String,
-        read: async (value, schemaType, document) => {
-            return 'value that your code sees'
-        },
-    }
 }, {
     virtuals:true,
     toObject: {getters: true},

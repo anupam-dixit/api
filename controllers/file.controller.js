@@ -30,8 +30,13 @@ const create = (req, res, next) => {
 const upload = (req, res, next) => {
     if (!res.req.hasOwnProperty('files')){
         res.json(myLib.sendResponse(0,"No files to upload"))
-    } else {
-        // console.log(req.files)
+    }
+    if (req.body.reference === undefined) {
+        res.json(myLib.sendResponse(0, "Reference field is required"))
+        res.req.files.forEach((obj) => {
+            myLib.delFile("public/images/" + obj.filename)
+        });
+        return
     }
     if (req.params.additional === undefined) {
         res.json(myLib.sendResponse(0, "Additional field is required"))
@@ -45,7 +50,7 @@ const upload = (req, res, next) => {
         dataToCreate.push({
             is_local: true,
             path: obj.path,
-            reference: "product_image",
+            reference: req.body.reference,
             additional: req.params.additional
         })
     });

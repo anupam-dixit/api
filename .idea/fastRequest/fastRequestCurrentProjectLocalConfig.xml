@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="fastRequestCurrentProjectLocalConfig">
+    <option name="cookieList">
+      <list>
+        <DataMapping>
+          <option name="type" value="townindia.in" />
+          <option name="value" value="parking_session=e0329d2f-b3b5-67c6-cf3e-c5274e3ae2c2; expires" />
+        </DataMapping>
+        <DataMapping>
+          <option name="type" value="https://townindia.in/" />
+          <option name="value" value="parking_session=e0329d2f-b3b5-67c6-cf3e-c5274e3ae2c2; expires" />
+        </DataMapping>
+      </list>
+    </option>
+    <option name="domain" value="https://townindia.in/" />
+    <option name="enableEnv" value="env" />
+    <option name="enableProject" value="MedicalAdda api" />
+    <option name="initFlag" value="1" />
+  </component>
+</project>

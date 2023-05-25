@@ -3,9 +3,24 @@ const myLib = require("../myLib");
 const {User} = require("../models/user.model");
 const mongoose = require("mongoose");
 const validation_list_user = async (req, res, next) => {
-    if (req.headers.user_data.user_type!=='sa'){
+    if (await myLib.hasPermission(req.headers.user_data.role, 'USERS_VIEW_ALL')===false){
         // If not super admin then show self data
         req.body._id=req.headers.user_data._id
+    }
+    next()
+};
+const validation_list_vendors = async (req, res, next) => {
+    if (req.body.pincode===undefined&&req.body.location===undefined){
+        res.json(myLib.sendResponse(0, "Pincode or Co-Ordinates required"))
+        return
+    }
+    if (req.body.location!==undefined&&typeof req.body.location!='object'){
+        res.json(myLib.sendResponse(0, "Location must be an array"))
+        return
+    }
+    if (req.body.location!==undefined&&typeof req.body.location=='object'&&req.body.max_distance===undefined){
+        res.json(myLib.sendResponse(0, "Distance required with location"))
+        return
     }
     next()
 };
@@ -52,4 +67,4 @@ const validation_update_user = async (req,res,next) =>{
     }
     next()
 };
-module.exports = {validation_list_user, validation_create_user,validation_update_user}
+module.exports = {validation_list_user,validation_list_vendors, validation_create_user,validation_update_user}

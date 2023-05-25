@@ -19,13 +19,13 @@ const create = async (req, res, next) => {
 };
 const list = async (req, res, next) => {
     var data;
-    if (req.headers.user_data.user_type==="sa"){
+    if (await myLib.hasPermission(req.headers.user_data.role, "INVITE_VIEW_ALL")){
         data = await Invite.find().lean().exec()
-    } else {
+    } if (await myLib.hasPermission(req.headers.user_data.role, "INVITE_VIEW_SELF")){
         // data = await Invite.find({created_by:req.headers.user_data._id})
         data = await Invite.find({created_by:req.headers.user_data._id}).populate('accepted_by').lean().exec()
     }
-    res.json(myLib.sendResponse(0, data))
+    res.json(myLib.sendResponse(1, data))
 };
 const verify = async (req, res, next) => {
     var data;
@@ -43,7 +43,7 @@ const verify = async (req, res, next) => {
         return
     }
     res.json(myLib.sendResponse(1, {'entity_name':invitation_key_in_db.entity_name,'phone':invitation_key_in_db.phone,'address'
-:invitation_key_in_db.address}))
+:invitation_key_in_db.address,location:invitation_key_in_db.location.coordinates}))
 };
 const accept = async (req, res, next) => {
     var verified=[]

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="fastRequestHistoryConfig">
+    <option name="historyList">
+      <list>
+        <ResponseHistory>
+          <option name="className" />
+          <option name="code" value="200" />
+          <option name="enableEnv" value="env" />
+          <option name="enableProject" value="MedicalAdda api" />
+          <option name="method" />
+          <option name="methodType" value="GET" />
+          <option name="paramGroup">
+            <ParamGroupCollection>
+              <option name="methodDescription" value="New Request" />
+              <option name="methodType" value="POST" />
+              <option name="multipartKeyValueListJson" value="[]" />
+              <option name="pathParamsKeyValueListJson" value="[]" />
+              <option name="url" value="product/toggle-active" />
+              <option name="urlEncodedKeyValueListJson" value="[]" />
+              <option name="urlParamsKeyValueListJson" value="[]" />
+            </ParamGroupCollection>
+          </option>
+          <option name="requestInfo" value="Request Url: https://townindia.in/product/toggle-active&#13;&#10;Request Headers: &#13;&#10;    Accept: application/json,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&#13;&#10;    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 Hutool&#13;&#10;    Accept-Encoding: gzip, deflate&#13;&#10;    Accept-Language: zh-CN,zh;q=0.8&#13;&#10;Request Body: &#13;&#10;    null&#13;&#10;" />
+          <option name="response" value="&lt;!doctype html&gt;&lt;html data-adblockkey=&quot;MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANDrp2lz7AOmADaN8tA50LsWcjLFyQFcb/P2Txc58oYOeILb3vBw7J6f4pamkAQVSQuqYsKx3YzdUHCvbVZvFUsCAwEAAQ==_WFgwaow7HOmlgHrPP0kA0qC/g7QYVzcDbq7anQG7ubFwGB88clKQiFug42cOOtzZESL3+sMjVXeaTrUEy5Eiig==&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;&lt;link rel=&quot;preconnect&quot; href=&quot;https://www.google.com&quot; crossorigin&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=&quot;target&quot; style='opacity: 0'&gt;&lt;/div&gt;&lt;script&gt;window.park = &quot;eyJ1dWlkIjoiZTAzMjlkMmYtYjNiNS02N2M2LWNmM2UtYzUyNzRlM2FlMmMyIiwicGFnZV90aW1lIjoxNjgzMTM2ODQxLCJwYWdlX3VybCI6Imh0dHBzOlwvXC90b3duaW5kaWEuaW5cL3Byb2R1Y3RcL3RvZ2dsZS1hY3RpdmUiLCJwYWdlX21ldGhvZCI6IlBPU1QiLCJwYWdlX3JlcXVlc3QiOltdLCJwYWdlX2hlYWRlcnMiOltdLCJob3N0IjoidG93bmluZGlhLmluIiwiaXAiOiI0OS4zNi4xNjkuMTAifQ==&quot;;&lt;/script&gt;&lt;script src=&quot;/js/parking.2.104.8.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;" />
+          <option name="url" value="product/toggle-active" />
+        </ResponseHistory>
+        <ResponseHistory>
+          <option name="className" />
+          <option name="code" value="200" />
+          <option name="enableEnv" value="env" />
+          <option name="enableProject" value="MedicalAdda api" />
+          <option name="method" />
+          <option name="methodType" value="GET" />
+          <option name="paramGroup">
+            <ParamGroupCollection>
+              <option name="methodDescription" value="New Request" />
+              <option name="methodType" value="POST" />
+              <option name="multipartKeyValueListJson" value="[]" />
+              <option name="pathParamsKeyValueListJson" value="[]" />
+              <option name="url" value="https://townindia.in/product/toggle-active" />
+              <option name="urlEncodedKeyValueListJson" value="[]" />
+              <option name="urlParamsKeyValueListJson" value="[]" />
+            </ParamGroupCollection>
+          </option>
+          <option name="requestInfo" value="Request Url: https://townindia.in/product/toggle-active&#13;&#10;Request Headers: &#13;&#10;    Accept: application/json,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&#13;&#10;    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 Hutool&#13;&#10;    Accept-Encoding: gzip, deflate&#13;&#10;    Accept-Language: zh-CN,zh;q=0.8&#13;&#10;Request Body: &#13;&#10;    null&#13;&#10;" />
+          <option name="response" value="&lt;!doctype html&gt;&lt;html data-adblockkey=&quot;MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANDrp2lz7AOmADaN8tA50LsWcjLFyQFcb/P2Txc58oYOeILb3vBw7J6f4pamkAQVSQuqYsKx3YzdUHCvbVZvFUsCAwEAAQ==_WFgwaow7HOmlgHrPP0kA0qC/g7QYVzcDbq7anQG7ubFwGB88clKQiFug42cOOtzZESL3+sMjVXeaTrUEy5Eiig==&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;&lt;link rel=&quot;preconnect&quot; href=&quot;https://www.google.com&quot; crossorigin&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=&quot;target&quot; style='opacity: 0'&gt;&lt;/div&gt;&lt;script&gt;window.park = &quot;eyJ1dWlkIjoiZTAzMjlkMmYtYjNiNS02N2M2LWNmM2UtYzUyNzRlM2FlMmMyIiwicGFnZV90aW1lIjoxNjgzMTM2ODIyLCJwYWdlX3VybCI6Imh0dHBzOlwvXC90b3duaW5kaWEuaW5cL3Byb2R1Y3RcL3RvZ2dsZS1hY3RpdmUiLCJwYWdlX21ldGhvZCI6IlBPU1QiLCJwYWdlX3JlcXVlc3QiOltdLCJwYWdlX2hlYWRlcnMiOltdLCJob3N0IjoidG93bmluZGlhLmluIiwiaXAiOiI0OS4zNi4xNjkuMTAifQ==&quot;;&lt;/script&gt;&lt;script src=&quot;/js/parking.2.104.8.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;" />
+          <option name="url" value="https://townindia.in/product/toggle-active" />
+        </ResponseHistory>
+      </list>
+    </option>
+  </component>
+</project>
