@@ -5,31 +5,51 @@ const https = require("https");
 const {User} = require("../models/user.model");
 
 const index = async (req, res, next) => {
-    const data = await Sms.find().lean().exec(); // .exec() returns a true Promise
+    const data = await Sms.aggregate([
+        {$match:req.body},
+        {
+            $lookup:
+                {
+                    from: 'users',
+                    localField: 'phone',
+                    foreignField: 'phone',
+                    pipeline: [
+                        {$project: {name: 1,phone:1,role:1}}
+                    ],
+                    as: 'user',
+                },
+        },
+        {
+            $sort: {
+                created_by: -1,
+            },
+        },
+    ])
     res.json(myLib.sendResponse(1, data));
 };
 const create = async (req, res, next) => {
-    var otp = Math.floor(Math.random() * 99999)
-    https.get("https://smsapi.edumarcsms.com/api/v1/sendsms?apikey=cleccyys60002uptn6ul2b3jk&senderId=EDUMRC&message=Your sms (Powered by Edumarc Technologies) OTP for verification is: " + otp + ". Code is valid for 2 minutes. OTP is confidential, refrain from sharing it with anyone.&number=" + req.body.phone + "&templateId=1707167291733893032", function (res_sms) {
+    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0
+    https.get("https://smsapi.edumarcsms.com/api/v1/sendsms?apikey=cleccyys60002uptn6ul2b3jk&senderId=EDUMRC&message=" +req.body.message+ "&number=" + req.body.phone + "&templateId="+req.body.templateId, function (res_sms) {
         var body = '';
         res_sms.on('data', function (chunk) {
             body += chunk;
         });
         res_sms.on('end', function () {
             var smsResponse = JSON.parse(body);
-            // console.log(":::"+JSON.stringify(smsResponse));
             const dataToCreate = new Sms({
                 'trans_id': smsResponse.data.transactionId,
                 'phone': req.body.phone,
-                'message': otp,
-                'type': 'otp',
+                'message': (req.body.type=='otp')?req.body.otp:req.body.message,
+                'type': req.body.type,
                 'delivery_status': smsResponse.success,
             });
             dataToCreate.save(async function (err, result) {
                 if (err) {
-                    res.json(myLib.sendResponse(0, err))
+                    res.json(myLib.sendResponse(0, err.toString()))
+                    return
                 } else {
                     await res.json(myLib.sendResponse(1, "Sent successfully"))
+                    return
                 }
             })
         });

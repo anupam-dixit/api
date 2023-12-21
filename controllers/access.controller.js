@@ -4,6 +4,7 @@ const {Role} = require("../models/role.model");
 const {RoleHasPermission} = require("../models/role-has-permission.model");
 const mongoose = require("mongoose");
 const {User} = require("../models/user.model");
+const {sendResponse} = require("../myLib");
 const update = async (req, res, next) => {
     // Domain.findOneAndUpdate({_id:req.body._id}, req.body, {upsert: false}, function(err, doc) {
     //     if (err){
@@ -44,6 +45,10 @@ const myRolePermissions = async (req, res, next) => {
     let myRolePerm = await RoleHasPermission.find({role: req.headers.user_data.role}).lean().exec()
     res.json(myLib.sendResponse(1, myRolePerm))
     return
+};
+const index = async (req, res, next) => {
+    let data = await RoleHasPermission.find(req.body).lean()
+    res.json(sendResponse(1,data));
 };
 const roleList = async (req, res, next) => {
     let matcData=req.body
@@ -144,6 +149,7 @@ const roleHasPermissionVerify = async (req, res, next) => {
 
 
 module.exports = {
+    index,
     permissionList,
     permissionCreate,
     permissionUpdate,

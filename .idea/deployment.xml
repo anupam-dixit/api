@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="Interserver" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="EzerHost NodeJs" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
+      <paths name="Alibaba">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/api" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="EzerHost NodeJs">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/public_html/medicaladda.com/api" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="Ezerhost">
         <serverdata>
           <mappings>
@@ -10,10 +24,17 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="Interserver">
+      <paths name="Medical Adda AWS">
         <serverdata>
           <mappings>
-            <mapping deploy="/public_html/api" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/api" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="OVH VPS">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

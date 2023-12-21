@@ -2,9 +2,9 @@
 const {Files} = require("../models/file.model");
 const myLib = require("../myLib");
 const path = require("path");
-const {body} = require("express-validator");
 const fs = require("fs");
 const e = require("express");
+const {sendResponse} = require("../myLib");
 const cloudinary = require('cloudinary').v2;
 // Configuration
 cloudinary.config({
@@ -13,7 +13,7 @@ cloudinary.config({
     api_secret: "ZdF2sut0XaAVOjLCQgRQwHBpA_s"
 });
 const index = async (req, res, next) => {
-    const data = await Files.find(req.body) // .exec() returns a true Promise
+    const data = await Files.find(req.body).populate({path:'created_by',select:'name'})
     res.json(myLib.sendResponse(1,data));
 };
 
@@ -27,9 +27,28 @@ const create = (req, res, next) => {
         }
     })
 };
+const update = (req, res, next) => {
+    const dataToCreate = Files.updateMany({additional: req.body.additional},req.body,{upsert: true}).then(doc=>{
+        res.json(sendResponse(1))
+        return
+    }).catch(err=>{
+        res.json(sendResponse(0,err.toString()))
+        return
+    })
+};
+const updateById = (req, res, next) => {
+    const dataToCreate = Files.findByIdAndUpdate(req.params._id,req.body).then(doc=>{
+        res.json(sendResponse(1))
+        return
+    }).catch(err=>{
+        res.json(sendResponse(0))
+        return
+    })
+};
 const upload = (req, res, next) => {
     if (!res.req.hasOwnProperty('files')){
         res.json(myLib.sendResponse(0,"No files to upload"))
+        return;
     }
     if (req.body.reference === undefined) {
         res.json(myLib.sendResponse(0, "Reference field is required"))
@@ -51,7 +70,8 @@ const upload = (req, res, next) => {
             is_local: true,
             path: obj.path,
             reference: req.body.reference,
-            additional: req.params.additional
+            additional: req.params.additional,
+            created_by:req.body.created_by
         })
     });
     Files.insertMany(dataToCreate, function (error, docs) {
@@ -72,4 +92,4 @@ const remove = async (req, res, next) => {
     })
 };
 
-module.exports = {index, create, upload, remove};
+module.exports = {index, create,update,updateById, upload, remove};

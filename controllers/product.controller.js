@@ -4,7 +4,6 @@ const {generateToken, decodeToken} = require("../myLib");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const multer = require("multer");
-const {body} = require("express-validator");
 const {Files} = require("../models/file.model");
 const {User} = require("../models/user.model");
 
@@ -21,13 +20,6 @@ const index = async (req, res, next) => {
                 vendor:true,
                 admin:true
             }
-        }
-        try{
-            if (['v','sa','s'].includes(req.headers.user_data.user_type)){
-                delete matchData.active
-            }
-        } catch (e) {
-            ;
         }
         if (req.body.pincode!==undefined&&parseInt(req.body.pincode)>0){
             let vendors=await User.find({pincodes: '123'}).select('_id').lean().exec()
@@ -65,6 +57,9 @@ const index = async (req, res, next) => {
         if (req.body.categ!==undefined){
             matchData.categ=mongoose.Types.ObjectId(req.body.categ)
         }
+        if (req.body.domain!==undefined){
+            matchData.domain=mongoose.Types.ObjectId(req.body.domain)
+        }
         data = await Product.aggregate([
             {
                 $match: matchData
@@ -90,7 +85,38 @@ const index = async (req, res, next) => {
                         foreignField: '_id',
                         as: 'vendor_details',
                         pipeline: [
-                            {$project: {name: 1, address: 1}}
+                            {$project: {name: 1,phone:1, address: 1,location:1,permits:1,welcome_message:1}},
+                            {$addFields:{"__id": {"$toString": "$_id"}}},
+                            {
+                                $lookup:
+                                    {
+                                        from: 'files',
+                                        localField: '__id',
+                                        foreignField: 'additional',
+                                        as: 'media',
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    reference: {
+                                                        $not: { $regex: /.pending/}
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                            },
+                            {
+                                $lookup:
+                                    {
+                                        from: 'domains',
+                                        localField: 'permits.domains',
+                                        foreignField: '_id',
+                                        as: 'permits.domains',
+                                        pipeline: [
+                                            {$project: {title: 1}}
+                                        ]
+                                    },
+                            }
                         ],
                     },
             },

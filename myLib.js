@@ -74,5 +74,4 @@ async function hasPermission(role, permissionToCheck) {
     answer = roleHasPerms.permission.includes(permissionToCheck)
     return answer
 }
-
 module.exports = {sendResponse, generateToken, decodeToken, delFile, randomString, pricer,hasPermission}

@@ -77,7 +77,13 @@ const UserSchema = new mongoose.Schema({
         domains: [{
             type: Schema.Types.ObjectId,
             ref: 'Domain'
-        }],
+        }]
+    },
+    welcome_message:{
+        type:String,
+    },
+    upi_id:{
+        type:String,
     },
     active: {
         type: Boolean,

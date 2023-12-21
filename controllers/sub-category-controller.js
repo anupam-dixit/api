@@ -3,7 +3,6 @@ const myLib = require("../myLib");
 const {Files} = require("../models/file.model");
 const {Schema} = require("mongoose");
 const mongoose = require("mongoose");
-const {body} = require("express-validator");
 const create = async (req, res, next) => {
     const dataToCreate = new SubCategory(req.body);
     dataToCreate.save(async function (err, result) {

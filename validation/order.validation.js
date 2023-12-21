@@ -3,8 +3,6 @@ const {Order} = require("../models/order.model")
 const mongoose = require("mongoose");
 const {sendResponse, hasPermission} = require("../myLib");
 const {FileOrder} = require("../models/file-order.model");
-const {isEmpty} = require("validator");
-const {body} = require("express-validator");
 const validation_list_order = async (req, res, next) => {
     if (await hasPermission(req.headers.user_data.role, "ORDERS_VIEW_ALL")){
         ;
@@ -31,11 +29,6 @@ const validation_list_order = async (req, res, next) => {
     next()
 };
 const validation_list_user_orders = async (req, res, next) => {
-    numOrders=await Order.countDocuments({created_by:req.headers.user_data._id}).lean().exec()
-    if (numOrders==0){
-        res.json(sendResponse(0, "No orders found"))
-        return
-    }
     next()
 };
 const validation_create_order = async (req, res, next) => {
@@ -46,17 +39,43 @@ const validation_update_order = async (req, res, next) => {
         res.json(sendResponse(0, "Order number is required"))
         return
     }
-    orderCount=Order.find({order_id:req.body.order_id}).countDocuments().lean().exec()
-    if (orderCount===0){
+    let order
+    if (req.body.file_ord!==undefined){
+        order=await FileOrder.find({order_id:req.body.order_id}).lean().exec()
+    } else {
+        order=await Order.find({order_id:req.body.order_id}).lean().exec()
+    }
+    order=await Order.find({order_id:req.body.order_id}).lean().exec()
+    if (!order){
         res.json(sendResponse(0, "Invalid Order Number"))
         return
     }
     if (req.body.status!==undefined){
-        if (req.headers.user_data.user_type!=='sa'&&req.headers.user_data.user_type!=='s'){
-            let order=await Order.findOne({order_id: req.body.order_id}).lean().exec()
-            if (order.vendor_id.toString()!==req.headers.user_data._id.toString()){
-                res.json(sendResponse(0, "You are not authorized for this action"))
-                return
+        if (req.body.status.order!==undefined){
+            if (order.vendor_id==req.headers.user_data._id){
+                if (!await hasPermission(req.headers.user_data.role,'ORDER_STATUS_UPDATE_SELF')&&!hasPermission(req.headers.user_data.role,'ORDER_STATUS_UPDATE_ALL')){
+                    res.json(sendResponse(0, "You are not authorized for this action"))
+                    return
+                }
+            } else {
+                if (!await hasPermission(req.headers.user_data.role,'ORDER_STATUS_UPDATE_ALL')){
+                    res.json(sendResponse(0, "You are not authorized for this action"))
+                    return
+                }
+            }
+        }
+
+        if (req.body.status.payment!==undefined){
+            if (order.vendor_id==req.headers.user_data._id){
+                if (!await hasPermission(req.headers.user_data.role,'ORDER_PAYMENT_STATUS_UPDATE_SELF')&&!hasPermission(req.headers.user_data.role,'ORDER_PAYMENT_STATUS_UPDATE_ALL')){
+                    res.json(sendResponse(0, "You are not authorized for this action"))
+                    return
+                }
+            } else {
+                if (!await hasPermission(req.headers.user_data.role,'ORDER_PAYMENT_STATUS_UPDATE_ALL')){
+                    res.json(sendResponse(0, "You are not authorized for this action"))
+                    return
+                }
             }
         }
     }

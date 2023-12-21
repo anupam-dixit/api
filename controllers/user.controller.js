@@ -1,10 +1,16 @@
 // var UserService = require('../services/user.services');
 const {User} = require("../models/user.model");
 const myLib = require("../myLib");
-const {generateToken, decodeToken} = require("../myLib");
+const {generateToken, decodeToken, sendResponse} = require("../myLib");
 const jwt = require("jsonwebtoken");
 const {Token} = require("../models/token.model");
 const mongoose = require("mongoose");
+const {Product} = require("../models/product.model");
+const {now} = require("mongoose");
+const {Order} = require("../models/order.model");
+const {FileOrder} = require("../models/file-order.model");
+const {Invite} = require("../models/invite.model");
+const {Visit} = require("../models/visit.model");
 
 const index = async (req, res, next) => {
     if (req.body._id!==undefined&&!mongoose.Types.ObjectId.isValid(req.body._id)){
@@ -14,7 +20,7 @@ const index = async (req, res, next) => {
     const data = await User.find(req.body).populate('permits.domains').lean().exec()
     res.json(myLib.sendResponse(1, data));
 };
-const vendors = async (req, res, next) => {
+let vendors = async (req, res, next) => {
     let matchData={
         active:true,
         role: 'VENDOR'
@@ -86,6 +92,182 @@ const vendors = async (req, res, next) => {
     }
     res.json(myLib.sendResponse(1, data));
 };
+const vendorsByProdSearchByLocation = async (req, res, next) => {
+    let matchData={active:{vendor:true,admin:true}}
+    if (req.body.search!==undefined){
+        matchData.$text= {$search: req.body.search}
+    }
+    let data=await Product.aggregate([
+        {$match: matchData},
+        { $project: { created_by: 1 } }
+    ])
+    allVendorIds=data.map(obj=>{
+        return obj.created_by
+    })
+    uniqueVendorIds = [...new Set(allVendorIds)].map(obj=>{
+        return mongoose.Types.ObjectId(obj)
+    })
+
+    let vendors= await User.aggregate([
+        {
+            $geoNear: {
+                near: { type: 'Point', coordinates:req.body.location },
+                distanceField: 'distance',
+                spherical: true,
+                maxDistance: parseInt(req.body.max_distance),
+            },
+        },
+        {"$addFields": {"converted_id": {"$toString": "$_id"}}},
+        {
+            $lookup:
+                {
+                    from: 'files',
+                    localField: 'converted_id',
+                    foreignField: 'additional',
+                    as: 'images',
+                    pipeline: [
+                        {$project: {is_local: 1, path: 1,reference:1}}
+                    ],
+                },
+        },
+        {
+            $lookup:
+                {
+                    from: 'subscriptionmembers',
+                    localField: '_id',
+                    foreignField: 'created_by',
+                    as: 'subscription',
+                    pipeline: [
+                        {
+                            $match: {
+                                $and:[
+                                    {'status': 'ACTIVE'},
+                                    {'validity.end': {$gte:now()}}
+                                ]
+                            }
+                        },
+                        {
+                            $lookup:
+                                {
+                                    from: 'subscriptions',
+                                    localField: 'subscription_id',
+                                    foreignField: '_id',
+                                    as: 'subscription_info',
+                                },
+                        },
+                        {$addFields:{str_subscription_id:{$toString:'$subscription_id'}}},
+                        {
+                            $lookup:
+                                {
+                                    from: 'files',
+                                    localField: 'str_subscription_id',
+                                    foreignField: 'additional',
+                                    as: 'subscription_img',
+                                },
+                        },
+                    ]
+                },
+        },
+        {
+            $project:{
+                password:0,verified:0,permits:0,created_at:0,updated_at:0
+            }
+        },
+        {
+            $sort:{distance:1}
+        },
+        {
+            $match: {
+                _id: {$in: uniqueVendorIds},
+                active:true
+            }
+        },
+    ]).exec()
+
+    res.json(myLib.sendResponse(1,vendors));
+}
+const vendorsByProdSearchByPincode = async (req, res, next) => {
+    let matchData={active:{vendor:true,admin:true}}
+    if (req.body.search!==undefined){
+        matchData.$text= {$search: req.body.search}
+    }
+    let data=await Product.aggregate([
+        {$match: matchData},
+        { $project: { created_by: 1 } }
+    ])
+    allVendorIds=data.map(obj=>{
+        return obj.created_by
+    })
+    uniqueVendorIds = [...new Set(allVendorIds)].map(obj=>{
+        return mongoose.Types.ObjectId(obj)
+    })
+    let vendors= await User.aggregate([
+        {"$addFields": {"converted_id": {"$toString": "$_id"}}},
+        {
+            $lookup:
+                {
+                    from: 'files',
+                    localField: 'converted_id',
+                    foreignField: 'additional',
+                    as: 'images',
+                    pipeline: [
+                        {$project: {is_local: 1, path: 1,reference:1}}
+                    ],
+                },
+        },
+        {
+            $lookup:
+                {
+                    from: 'subscriptionmembers',
+                    localField: '_id',
+                    foreignField: 'created_by',
+                    as: 'subscription',
+                    pipeline: [
+                        {
+                            $match: {
+                                $and:[
+                                    {'status': 'ACTIVE'},
+                                    {'validity.end': {$gte:now()}}
+                                ]
+                            }
+                        },
+                        {
+                            $lookup:
+                                {
+                                    from: 'subscriptions',
+                                    localField: 'subscription_id',
+                                    foreignField: '_id',
+                                    as: 'subscription_info',
+                                },
+                        },
+                        {$addFields:{str_subscription_id:{$toString:'$subscription_id'}}},
+                        {
+                            $lookup:
+                                {
+                                    from: 'files',
+                                    localField: 'str_subscription_id',
+                                    foreignField: 'additional',
+                                    as: 'subscription_img',
+                                },
+                        },
+                    ]
+                },
+        },
+        {
+            $project:{
+                password:0,verified:0,permits:0,created_at:0,updated_at:0
+            }
+        },
+        {
+            $match: {
+                _id: {$in: uniqueVendorIds},
+                pincodes:req.body.pincode,
+                active:true
+            }
+        },
+    ]).exec()
+    res.json(myLib.sendResponse(1,vendors));
+}
 const signup =  async (req, res, next) => {
     var data;
     data = await User.find({'phone': req.body.phone}).lean().exec();
@@ -145,6 +327,13 @@ const update = async (req, res, next) => {
         res.json(myLib.sendResponse(0))
     })
 };
+const updateByPhone = async (req, res, next) => {
+    const stts=await User.updateOne({phone:req.body.phone}, req.body).then((doc)=>{
+        res.json(myLib.sendResponse(1))
+    }).catch((err)=>{
+        res.json(myLib.sendResponse(0))
+    })
+};
 const login = async (req, res, next) => {
     if (req.body.phone.length!=10){
         res.json(myLib.sendResponse(0, "Provide 10 digit phone number"))
@@ -182,5 +371,336 @@ const logout = async (req, res, next) => {
     }
     res.json(myLib.sendResponse(1))
 };
+const dashboardDataAdmin = async (req, res, next) => {
+    let result={}
+    result.numUsers=await User.countDocuments()
+    result.numOrders=(await Order.distinct('order_id').lean().exec()).length+(await FileOrder.distinct('order_id').lean().exec()).length
+    result.numInvite=await Invite.countDocuments()
+    result.numProds=await Product.countDocuments()
+    result.numVisits=await Visit.countDocuments()
 
-module.exports = {index,vendors, create, update, login, logout, signup};
+    let date=new Date()
+    let arrVendorConversion=[['Month','New Customer','Invited','Created']]
+    for (i = 0; i <= date.getMonth(); i++) {
+        curCustomers=await User.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },role:'CUSTOMER'
+        }).countDocuments()
+        curVendorsInvited=await Invite.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+        }).countDocuments()
+        curVendorsCreated=await User.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+            role:'VENDOR'
+        }).countDocuments()
+        arrVendorConversion.push([
+            new Date(date.getFullYear(), i).toLocaleString('default', { month: 'long' }),
+            curCustomers,
+            curVendorsInvited,
+            curVendorsCreated
+        ])
+    }
+    result.vendorConversiuonChart=arrVendorConversion
+
+    let arrOrderChart=[['Month','Common Order','File Order']]
+    for (i = 0; i <= date.getMonth(); i++) {
+        curOrds=await Order.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+        }).distinct('order_id').lean().exec()
+        curFileOrds=await FileOrder.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+        }).distinct('order_id').lean().exec()
+        arrOrderChart.push([
+            new Date(date.getFullYear(), i).toLocaleString('default', { month: 'long' }),
+            curOrds.length,
+            curFileOrds.length
+        ])
+    }
+    result.orderChart=arrOrderChart
+
+    let arrProdCreationChart=[['Month','New Products Upload']]
+    for (i = 0; i <= date.getMonth(); i++) {
+        curProd=await Product.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+        }).countDocuments()
+        arrProdCreationChart.push([
+            new Date(date.getFullYear(), i).toLocaleString('default', { month: 'long' }),
+            curProd
+        ])
+    }
+    result.prodCreationChart=arrProdCreationChart
+
+    res.json(sendResponse(1,result))
+};
+const dashboardDataVendor = async (req, res, next) => {
+    let result={}
+    result.numOrders=(await Order.find({vendor_id:req.headers.user_data._id}).distinct('order_id').lean().exec()).length+(await FileOrder.find({vendor_id:req.headers.user_data._id}).distinct('order_id').lean().exec()).length
+    result.numProds=await Product.find({created_by:req.headers.user_data._id}).countDocuments()
+
+    let date=new Date()
+    // let arrVendorConversion=[['Month','New Customer','Invited','Created']]
+    // for (i = 0; i <= date.getMonth(); i++) {
+    //     curCustomers=await User.find({
+    //         created_at: {
+    //             $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+    //             $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+    //         },role:'CUSTOMER'
+    //     }).countDocuments()
+    //     curVendorsInvited=await Invite.find({
+    //         created_at: {
+    //             $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+    //             $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+    //         },
+    //     }).countDocuments()
+    //     curVendorsCreated=await User.find({
+    //         created_at: {
+    //             $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+    //             $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+    //         },
+    //         role:'VENDOR'
+    //     }).countDocuments()
+    //     arrVendorConversion.push([
+    //         new Date(date.getFullYear(), i).toLocaleString('default', { month: 'long' }),
+    //         curCustomers,
+    //         curVendorsInvited,
+    //         curVendorsCreated
+    //     ])
+    // }
+    // result.vendorConversiuonChart=arrVendorConversion
+    //
+    let arrOrderChart=[['Month','Common Order','File Order']]
+    for (i = 0; i <= date.getMonth(); i++) {
+        curOrds=await Order.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+            vendor_id:req.headers.user_data._id
+        }).distinct('order_id').lean().exec()
+        curFileOrds=await FileOrder.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+            vendor_id:req.headers.user_data._id
+        }).distinct('order_id').lean().exec()
+        arrOrderChart.push([
+            new Date(date.getFullYear(), i).toLocaleString('default', { month: 'long' }),
+            curOrds.length,
+            curFileOrds.length
+        ])
+    }
+    result.orderChart=arrOrderChart
+
+    let arrProdCreationChart=[['Month','New Products Upload']]
+    for (i = 0; i <= date.getMonth(); i++) {
+        curProd=await Product.find({
+            created_at: {
+                $gte: new Date(date.getFullYear(), i, 1), // Start of the month
+                $lt: new Date(date.getFullYear(), i+1, 1), // Start of the next month
+            },
+            created_by:req.headers.user_data._id
+        }).countDocuments()
+        arrProdCreationChart.push([
+            new Date(date.getFullYear(), i).toLocaleString('default', { month: 'long' }),
+            curProd
+        ])
+    }
+    result.prodCreationChart=arrProdCreationChart
+
+    res.json(sendResponse(1,result))
+};
+const vendorListByDomainLocation = async (req, res, next) => {
+    findParams={domain:req.body.domain,active:{vendor:true,admin:true}}
+    if (req.body.search){
+        findParams.$text={$search: req.body.search}
+    }
+    Product.find(findParams).select('created_by').lean().then(async doc => {
+        allVendorIds=doc.map(obj=>{
+            return obj.created_by
+        })
+        uniqueVendorIds = [...new Set(allVendorIds)].map(obj=>{
+            return mongoose.Types.ObjectId(obj)
+        })
+        let vendors = await User.aggregate([
+            {
+                $geoNear: {
+                    near: { type: 'Point', coordinates:req.body.location },
+                    distanceField: 'distance',
+                    spherical: true,
+                    maxDistance: Number(req.body.max_distance),
+                },
+            },
+            {"$addFields": {"converted_id": {"$toString": "$_id"}}},
+            {
+                $lookup:
+                    {
+                        from: 'files',
+                        localField: 'converted_id',
+                        foreignField: 'additional',
+                        as: 'images',
+                        pipeline: [
+                            {$project: {is_local: 1, path: 1, reference: 1}}
+                        ],
+                    },
+            },
+            {
+                $lookup:
+                    {
+                        from: 'subscriptionmembers',
+                        localField: '_id',
+                        foreignField: 'created_by',
+                        as: 'subscription',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $and: [
+                                        {'status': 'ACTIVE'},
+                                        {'validity.end': {$gte: now()}}
+                                    ]
+                                }
+                            },
+                            {
+                                $lookup:
+                                    {
+                                        from: 'subscriptions',
+                                        localField: 'subscription_id',
+                                        foreignField: '_id',
+                                        as: 'subscription_info',
+                                    },
+                            },
+                            {$addFields: {str_subscription_id: {$toString: '$subscription_id'}}},
+                            {
+                                $lookup:
+                                    {
+                                        from: 'files',
+                                        localField: 'str_subscription_id',
+                                        foreignField: 'additional',
+                                        as: 'subscription_img',
+                                    },
+                            },
+                        ]
+                    },
+            },
+            {
+                $project: {
+                    password: 0, verified: 0, permits: 0, created_at: 0, updated_at: 0
+                }
+            },
+            {
+                $match: {
+                    _id: {$in: uniqueVendorIds},
+                    active: true
+                }
+            },
+        ]).exec()
+        res.json(sendResponse(1,vendors))
+        return
+    }).catch(err=>{
+        res.json(sendResponse(0,err))
+        return
+    })
+};
+const vendorListByDomainPincode = async (req, res, next) => {
+    findParams={domain:req.body.domain,active:{vendor:true,admin:true},}
+    if (req.body.search){
+        findParams.$text={$search: req.body.search}
+    }
+    Product.find(findParams).select('created_by').lean().then(async doc => {
+        allVendorIds=doc.map(obj=>{
+            return obj.created_by
+        })
+        uniqueVendorIds = [...new Set(allVendorIds)].map(obj=>{
+            return mongoose.Types.ObjectId(obj)
+        })
+        let vendors = await User.aggregate([
+            {"$addFields": {"converted_id": {"$toString": "$_id"}}},
+            {
+                $lookup:
+                    {
+                        from: 'files',
+                        localField: 'converted_id',
+                        foreignField: 'additional',
+                        as: 'images',
+                        pipeline: [
+                            {$project: {is_local: 1, path: 1, reference: 1}}
+                        ],
+                    },
+            },
+            {
+                $lookup:
+                    {
+                        from: 'subscriptionmembers',
+                        localField: '_id',
+                        foreignField: 'created_by',
+                        as: 'subscription',
+                        pipeline: [
+                            {
+                                $match: {
+                                    $and: [
+                                        {'status': 'ACTIVE'},
+                                        {'validity.end': {$gte: now()}}
+                                    ]
+                                }
+                            },
+                            {
+                                $lookup:
+                                    {
+                                        from: 'subscriptions',
+                                        localField: 'subscription_id',
+                                        foreignField: '_id',
+                                        as: 'subscription_info',
+                                    },
+                            },
+                            {$addFields: {str_subscription_id: {$toString: '$subscription_id'}}},
+                            {
+                                $lookup:
+                                    {
+                                        from: 'files',
+                                        localField: 'str_subscription_id',
+                                        foreignField: 'additional',
+                                        as: 'subscription_img',
+                                    },
+                            },
+                        ]
+                    },
+            },
+            {
+                $project: {
+                    password: 0, verified: 0, permits: 0, created_at: 0, updated_at: 0
+                }
+            },
+            {
+                $match: {
+                    _id: {$in: uniqueVendorIds},
+                    pincodes:req.body.pincode,
+                    active:true
+                }
+            },
+        ]).exec()
+        res.json(sendResponse(1,vendors))
+        return
+    }).catch(err=>{
+        res.json(sendResponse(0))
+        return
+    })
+};
+
+module.exports = {vendorListByDomainLocation,vendorListByDomainPincode,index,vendors,vendorsByProdSearchByLocation,vendorsByProdSearchByPincode, create, update,updateByPhone, login, logout, signup,dashboardDataAdmin,dashboardDataVendor};

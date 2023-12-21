@@ -22,7 +22,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 /* GET users listing. */
 router.post('/list',[validation_list_product], ProductController.index);
-router.post('/create', [ensureLogin,ensurePermission("PRODUCTS_ADD"),validation_create_product], ProductController.update);
+router.post('/create', [ensureLogin,ensurePermission("PRODUCTS_ADD"),validation_create_product], ProductController.create);
 router.post('/update', [ensureLogin,validation_update_product], ProductController.update);
 router.post('/search', [], ProductController.search);
 router.post('/toggle-active', [ensureLogin,validation_toggle_active], ProductController.toggle_active);

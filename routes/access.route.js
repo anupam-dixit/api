@@ -8,19 +8,20 @@ const {validation_role_create, validation_permission_create, validation_role_has
 const {ensureLogin} = require("../middleware/auth");
 
 router.post('/permission/list',[], AccessController.permissionList);
-router.post('/permission/create',[validation_permission_create], AccessController.permissionCreate);
-router.post('/permission/update',[validation_permission_update], AccessController.permissionUpdate);
+router.post('/permission/create',[ensureLogin,validation_permission_create], AccessController.permissionCreate);
+router.post('/permission/update',[ensureLogin,validation_permission_update], AccessController.permissionUpdate);
 // router.post('/permission/delete',[validation_permission_delete], AccessController.perd);
 
 router.post('/role/list',[validation_role_list], AccessController.roleList);
-router.post('/role/create',[validation_role_create], AccessController.roleCreate);
-router.post('/role/update',[validation_role_update], AccessController.roleUpdate);
-router.delete('/role/delete',[validation_role_delete], AccessController.roleDelete);
+router.post('/role/create',[ensureLogin,validation_role_create], AccessController.roleCreate);
+router.post('/role/update',[ensureLogin,validation_role_update], AccessController.roleUpdate);
+router.delete('/role/delete',[ensureLogin,validation_role_delete], AccessController.roleDelete);
 
-router.post('/role-has-permission/create',[validation_role_has_permission_create], AccessController.roleHasPermissionCreate);
-router.post('/role-has-permission/update',[validation_role_has_permission_update], AccessController.roleHasPermissionUpdate);
+router.post('/role-has-permission/create',[ensureLogin,validation_role_has_permission_create], AccessController.roleHasPermissionCreate);
+router.post('/role-has-permission/update',[ensureLogin,validation_role_has_permission_update], AccessController.roleHasPermissionUpdate);
 router.post('/role-has-permission/verify',[], AccessController.roleHasPermissionVerify);
 router.post('/role-has-permission/my',[ensureLogin], AccessController.myRolePermissions);
+router.post('/role-has-permission/list',[], AccessController.index);
 // router.post('/role-has-permission/list',[], AccessController.roleHasPermissionList);
 
 module.exports = router;

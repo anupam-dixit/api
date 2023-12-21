@@ -14,12 +14,12 @@ const ensureLogin = async (req, res, next) => {
         res.status(401).json(myLib.sendResponse(0, "Token Invalid"))
         return
     }
-    if (token_in_db.expiry < Date.now()) {
-        // res.json(myLib.sendResponse(0, {'now':moment(Date.now()).format('MM/DD/YYYY HH:mm'),'expiry':moment(token_in_db.expiry).format('MM/DD/YYYY HH:mm')}))
-        // res.json(myLib.sendResponse(0, decodeToken(req.headers.token)))
-        res.json(myLib.sendResponse(0,"Token expired"))
-        return
-    }
+    // if (token_in_db.expiry < Date.now()) {
+    //     // res.json(myLib.sendResponse(0, {'now':moment(Date.now()).format('MM/DD/YYYY HH:mm'),'expiry':moment(token_in_db.expiry).format('MM/DD/YYYY HH:mm')}))
+    //     // res.json(myLib.sendResponse(0, decodeToken(req.headers.token)))
+    //     res.json(myLib.sendResponse(0,moment(decodeToken(req.headers.token).exp).format('MM/DD/YYYY HH:mm')))
+    //     return
+    // }
     var auth_user_data = await User.findOne({_id: token_in_db.user_id}).lean().exec();
     if (!auth_user_data){
         res.json(myLib.sendResponse(0, "User not found UNauthenticated"))

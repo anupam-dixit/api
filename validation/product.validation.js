@@ -5,7 +5,6 @@ const {User} = require("../models/user.model");
 const {Category} = require("../models/category.model");
 const {SubCategory} = require("../models/sub-category.model");
 const {Mongoose} = require("mongoose");
-const { body, validationResult } = require('express-validator');
 const {ensureLogin} = require("../middleware/auth");
 const {ensureAdmin} = require("../middleware/ensureAdmin");
 const {ensureVendor} = require("../middleware/ensureVendor");
@@ -162,13 +161,16 @@ const validation_update_product = async (req, res, next) => {
     }
     vendor=req.headers.user_data
     found=false
-    for (i=0;i<vendor.permits.domains.length;i++){
-        if (vendor.permits.domains[i]==req.body.domain){
-            found=true
+    console.log()
+    if (vendor.permits.domains!==undefined){
+        for (i=0;i<vendor.permits.domains.length;i++){
+            if (vendor.permits.domains[i]==req.body.domain){
+                found=true
+            }
         }
     }
     if (!found){
-        res.json(myLib.sendResponse(0, found))
+        res.json(myLib.sendResponse(0, 'Domain not permitted'))
         return
     }
     if (!req.body.hasOwnProperty('price_mod')){

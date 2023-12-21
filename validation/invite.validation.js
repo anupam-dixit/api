@@ -15,17 +15,16 @@ const validation_create_invitation = async (req, res, next) => {
         res.json(myLib.sendResponse(0, "This phone number already in use"))
         return
     }
-    try{
-        if (req.body.location.coordinates.length!==2){
-            res.json(myLib.sendResponse(0, "Location is required"))
-            return
-        }
-        if (parseFloat(req.body.location.coordinates[0])<=0&&parseFloat(req.body.location.coordinates[1])<=0){
-            res.json(myLib.sendResponse(0, "Invalid location"))
-            return
-        }
-    } catch (e) {
+    if (req.body.location.coordinates==undefined||typeof req.body.location.coordinates!='object'){
         res.json(myLib.sendResponse(0, "Location is required"))
+        return
+    }
+    if (req.body.location.coordinates[0]==null||req.body.location.coordinates[0]=='0'){
+        res.json(myLib.sendResponse(0, "Invalid Longitude"))
+        return
+    }
+    if (req.body.location.coordinates[1]==null||req.body.location.coordinates[1]=='0'){
+        res.json(myLib.sendResponse(0, "Invalid Lattitude"))
         return
     }
     next()

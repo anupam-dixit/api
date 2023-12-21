@@ -51,8 +51,7 @@ const accept = async (req, res, next) => {
         verified.push("phone")
     }
 
-    req.body.pincodes=req.body.pincodes.split(",")
-    req.body.user_type='v'
+    req.body.role='VENDOR'
     req.body.verified=verified
     req.body.active=false
     req.body.name=req.body.entity_name

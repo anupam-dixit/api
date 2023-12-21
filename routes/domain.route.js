@@ -10,7 +10,7 @@ const {ensureVendor} = require("../middleware/ensureVendor");
 router.post('/create', [ensureLogin,ensurePermission('DOMAIN_CREATE'),validation_create_domain], DomainController.create);
 router.post('/update', [ensureLogin,ensurePermission('DOMAIN_CREATE'),validation_update_domain], DomainController.update);
 router.post('/delete', [ensureLogin,ensurePermission('DOMAIN_EDIT'),validation_delete_domain], DomainController.remove);
-router.post('/list', [ensureLogin], DomainController.list);
+router.post('/list', [], DomainController.list);
 router.post('/permitted-domains', [ensureLogin], DomainController.permittedDomains);
 
 module.exports = router;

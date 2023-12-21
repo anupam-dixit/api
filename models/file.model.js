@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+const {Schema} = require("mongoose");
 
 const FileModelSchema  = new mongoose.Schema({
     is_local: {
@@ -14,6 +15,10 @@ const FileModelSchema  = new mongoose.Schema({
     },
     additional: {
         type: String,
+    },
+    created_by:{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
     }
 },{
     timestamps: {
